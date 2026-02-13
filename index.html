@@ -1,0 +1,189 @@
+# Cycle-
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycle＋ | あなたの保健室</title>
+    <style>
+        :root {
+            --main-bg: #f9f7f2;
+            --accent-green: #a3d1c6;
+            --accent-pink: #fdeef4;
+            --text-color: #555;
+            --white: #ffffff;
+        }
+
+        body {
+            background-color: var(--main-bg);
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--white);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            padding-bottom: 70px;
+            overflow-x: hidden;
+        }
+
+        /* 画面切り替え制御 */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* ヘッダー */
+        .header {
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* キャラクターセクション */
+        .chara-box {
+            background-color: var(--accent-pink);
+            padding: 20px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+        }
+        .chara-icon { font-size: 50px; margin-bottom: 10px; }
+        .bubble {
+            background: white;
+            padding: 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* 歩数計 */
+        .step-container {
+            padding: 30px;
+            text-align: center;
+        }
+        .step-circle {
+            width: 180px;
+            height: 180px;
+            border: 10px solid #eee;
+            border-top: 10px solid var(--accent-green);
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .count { font-size: 2rem; font-weight: bold; }
+
+        /* つぶやきエリア */
+        .sns-post-area { padding: 15px; border-bottom: 5px solid var(--main-bg); }
+        .sns-input {
+            width: 100%; border: 1px solid #ddd; border-radius: 10px;
+            padding: 10px; box-sizing: border-box; resize: none;
+        }
+        .post-btn {
+            background: var(--accent-green); color: white; border: none;
+            padding: 8px 20px; border-radius: 20px; margin-top: 8px; float: right;
+        }
+        .timeline { padding: 10px; }
+        .post-card { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ナビゲーション */
+        .nav-bar {
+            position: fixed; bottom: 0; width: 100%; max-width: 420px;
+            height: 60px; background: white; border-top: 1px solid #eee;
+            display: flex; justify-content: space-around; align-items: center;
+        }
+        .nav-item { cursor: pointer; font-size: 1.5rem; color: #ccc; }
+        .nav-item.active { color: var(--accent-green); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">Cycle＋</div>
+
+    <div id="home" class="page active">
+        <div class="chara-box">
+            <div class="chara-icon">🧸</div>
+            <div class="bubble">
+                こんにちは。シフォンです。<br>
+                無理に歩かなくても大丈夫。今はゆっくり休みましょう。
+            </div>
+        </div>
+        <div class="step-container">
+            <div class="step-circle">
+                <div class="count">125,000</div>
+                <div style="font-size:0.8rem; color:#888;">あと55,000歩</div>
+            </div>
+            <p>今月のナプキン獲得まで <strong>69%</strong></p>
+        </div>
+        <div style="text-align: center; padding: 0 20px;">
+            <button style="width:100%; padding:15px; border-radius:25px; border:none; background:var(--accent-green); color:white; font-weight:bold;">専門家に相談する</button>
+        </div>
+    </div>
+
+    <div id="sns" class="page">
+        <div class="sns-post-area">
+            <textarea id="postInput" class="sns-input" rows="2" placeholder="今の気持ちをどうぞ..."></textarea>
+            <button class="post-btn" onclick="postTweet()">つぶやく</button>
+            <div style="clear:both;"></div>
+        </div>
+        <div id="timeline" class="timeline">
+            <div class="post-card">
+                <div style="font-size:24px; margin-right:10px;">🌸</div>
+                <div>
+                    <div style="font-size:12px; font-weight:bold;">ひまり（高2）</div>
+                    <div style="font-size:14px;">シフォンさんの言葉に救われた...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="showPage('home', this)">🏠</div>
+        <div class="nav-item" onclick="showPage('sns', this)">📝</div>
+        <div class="nav-item">🛍</div>
+        <div class="nav-item">📖</div>
+    </div>
+</div>
+
+<script>
+    function showPage(pageId, element) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    function postTweet() {
+        const input = document.getElementById('postInput');
+        const text = input.value.trim();
+        const forbidden = ["バカ", "きもい"]; // 制限ワード例
+
+        if(!text) return;
+        if(forbidden.some(w => text.includes(w))) {
+            alert("シフォンより：その言葉は誰かを傷つけるかもしれません。");
+            return;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'post-card';
+        card.innerHTML = `<div style="font-size:24px; margin-right:10px;">🐣</div>
+                          <div><div style="font-size:12px; font-weight:bold;">あなた</div>
+                          <div style="font-size:14px;">${text}</div></div>`;
+        const tl = document.getElementById('timeline');
+        tl.insertBefore(card, tl.firstChild);
+        input.value = '';
+    }
+</script>
+
+</body>
+</html>
